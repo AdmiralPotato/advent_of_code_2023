@@ -42,6 +42,22 @@ struct ParsedLine {
     pub id: u8,
     pub handfulls: Vec<Cubes>,
 }
+impl ParsedLine {
+    fn from_str(text: &str) -> ParsedLine {
+        let splits = text.split_once(": ").unwrap();
+        let id = splits
+            .0
+            .split_once(' ')
+            .unwrap()
+            .1
+            .parse()
+            .expect("Unable to parse ID");
+        ParsedLine {
+            id,
+            handfulls: splits.1.split("; ").map(Cubes::from_str).collect(),
+        }
+    }
+}
 
 const PART_1_CONFIG: Cubes = Cubes {
     red: 12,
@@ -49,20 +65,8 @@ const PART_1_CONFIG: Cubes = Cubes {
     blue: 14,
 };
 
-fn parse_line(text: &str) -> ParsedLine {
-    let splits = text.split_once(": ").unwrap();
-    let id = splits
-        .0
-        .split_once(' ')
-        .unwrap()
-        .1
-        .parse()
-        .expect("Unable to parse ID");
-    let handfulls = splits.1.split("; ").map(Cubes::from_str).collect();
-    ParsedLine { id, handfulls }
-}
 fn test_line_part_1(text: &str) -> u8 {
-    let parsed = parse_line(text);
+    let parsed = ParsedLine::from_str(text);
     if parsed
         .handfulls
         .iter()
@@ -155,7 +159,7 @@ mod tests {
                 ],
             },
         );
-        assert_eq!(parse_line(sample_a.0), sample_a.1);
+        assert_eq!(ParsedLine::from_str(sample_a.0), sample_a.1);
     }
     #[test]
     fn part_1_test_pass() {
