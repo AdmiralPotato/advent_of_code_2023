@@ -1,3 +1,4 @@
+use std::cmp;
 use std::fs::read_to_string;
 use std::str::Split;
 
@@ -29,6 +30,11 @@ impl Cubes {
     }
     fn test(&self, limit: Cubes) -> bool {
         self.red <= limit.red && self.green <= limit.green && self.blue <= limit.blue
+    }
+    fn expand(&mut self, bounds: &Cubes) {
+        self.red = cmp::max(self.red, bounds.red);
+        self.green = cmp::max(self.green, bounds.green);
+        self.blue = cmp::max(self.blue, bounds.blue);
     }
 }
 
@@ -74,11 +80,24 @@ fn test_line_part_1(text: &str) -> u8 {
     }
 }
 
-/*
-fn test_line_part_2(text: &str) -> u8 {
-    todo!("Implement me later")
+fn test_line_part_2(text: &str) -> u32 {
+    let mut total_cubes = Cubes::default();
+    parse_line(text)
+        .handfulls
+        .iter()
+        .for_each(|cubes| total_cubes.expand(cubes));
+    let mut total: u32 = 1;
+    if total_cubes.red > 0 {
+        total *= total_cubes.red as u32
+    }
+    if total_cubes.green > 0 {
+        total *= total_cubes.green as u32
+    }
+    if total_cubes.blue > 0 {
+        total *= total_cubes.blue as u32
+    }
+    total
 }
-*/
 
 fn part_1(lines: &Split<&str>) -> u32 {
     lines
@@ -87,24 +106,23 @@ fn part_1(lines: &Split<&str>) -> u32 {
         .sum()
 }
 
-/*
 fn part_2(lines: &Split<&str>) -> u32 {
     lines
         .clone()
         .map(|line| test_line_part_2(line) as u32)
         .sum()
 }
-*/
 
 fn main() {
     let text_file_string = read_to_string("./day_02/input.txt").expect("It was supposed to work");
     let sample_input = text_file_string.trim().split("\n");
     let part_1_result = part_1(&sample_input);
     println!("WHAT IS part_1_result?? {part_1_result}");
-    // let part_2_result = part_2(sample_input.clone());
-    // println!("WHAT IS part_2_result?? {part_2_result}");
+    let part_2_result = part_2(&sample_input);
+    println!("WHAT IS part_2_result?? {part_2_result}");
     /*
         WHAT IS part_1_result?? 2716
+        WHAT IS part_2_result?? 72227
     */
 }
 
@@ -163,8 +181,32 @@ mod tests {
             0
         );
     }
-    // #[test]
-    // fn part_2_test_0() {
-    //     assert_eq!(parse_line_part_2(SAMPLE_INPUT_B[0]), 29);
-    // }
+
+    #[test]
+    fn cubes_expand() {
+        let mut cubes = Cubes::default();
+        assert_eq!(
+            cubes,
+            Cubes {
+                red: 0,
+                green: 0,
+                blue: 0,
+            }
+        );
+        cubes.expand(&PART_1_CONFIG);
+        assert_eq!(cubes, PART_1_CONFIG);
+    }
+    #[test]
+    fn part_2_test_0() {
+        assert_eq!(
+            test_line_part_2("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"),
+            48
+        );
+    }
+    #[test]
+    fn part_2_test() {
+        let text_file_string = read_to_string("./input_sample.txt").unwrap();
+        let sample_input = text_file_string.trim().split("\n");
+        assert_eq!(part_2(&sample_input), 2286);
+    }
 }
