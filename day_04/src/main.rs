@@ -15,7 +15,7 @@ fn main() {
     // let part_2_result = part_2(&text_file_string);
     // println!("WHAT IS part_2_result?? {part_2_result}");
     /*
-        WHAT IS part_1_result?? ???
+        WHAT IS part_1_result?? 19855
         WHAT IS part_2_result?? ???
     */
 }
@@ -30,30 +30,20 @@ struct Card {
 }
 impl Card {
     fn from_str(text: &str) -> Card {
-        let text = text
-            .replace("  ", " ")
-            .replace("  ", " ")
-            .replace("  ", " ")
-            .replace("  ", " ");
+        let text = text.replace("  ", " ");
         let (id_fragment, rest) =
             text.trim().split_once(": ").expect("Bad line");
         let id = id_fragment[5..]
+            .trim()
             .parse()
             .unwrap_or_else(|_| panic!("Bad id {id_fragment}"));
         let (winning_str, cells_str) =
             rest.split_once(" | ").expect("need pipe");
         let winning = Card::get_numbers(winning_str);
         let cells = Card::get_numbers(cells_str);
-        let count = cells
-            .iter()
-            .filter(|x| winning.contains(x))
-            .collect::<Vec<&u32>>()
-            .len() as u32;
-        let score = if count > 0 {
-            2u32.pow(count.saturating_sub(1))
-        } else {
-            0
-        };
+        let count =
+            cells.iter().filter(|x| winning.contains(x)).count() as u32;
+        let score = if count > 0 { 2u32.pow(count - 1) } else { 0 };
         Card {
             id,
             winning,
