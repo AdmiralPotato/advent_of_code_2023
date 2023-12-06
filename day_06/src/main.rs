@@ -3,14 +3,17 @@ use std::fs::read_to_string;
 fn part_1(text: &str) -> u64 {
     RaceConfig::from_str(text).solve_part_1()
 }
+fn part_2(text: &str) -> u64 {
+    RaceConfig::from_str_b(text).solve_part_1()
+}
 
 fn main() {
     let text_file_string =
         read_to_string("./day_06/input.txt").expect("It was supposed to work");
     let part_1_result = part_1(&text_file_string);
     println!("WHAT IS part_1_result?? {part_1_result}");
-    // let part_2_result = part_2(&text_file_string);
-    // println!("WHAT IS part_2_result?? {part_2_result}");
+    let part_2_result = part_2(&text_file_string);
+    println!("WHAT IS part_2_result?? {part_2_result}");
     /*
         WHAT IS part_1_result?? 2269432
         WHAT IS part_2_result?? ???
@@ -51,6 +54,16 @@ impl RaceConfig {
             .split(' ')
             .map(|x| x.parse().unwrap())
             .collect();
+        RaceConfig { time, distance }
+    }
+    fn from_str_b(text: &str) -> RaceConfig {
+        let lines = obliterate_whitespace(text);
+        let lines = lines.split_once('\n').unwrap();
+        let time = lines.0.split_once(": ").unwrap().1.replace(" ", "");
+        let time = time.split(' ').map(|x| x.parse().unwrap()).collect();
+        let distance = lines.1.split_once(": ").unwrap().1.replace(" ", "");
+        let distance =
+            distance.split(' ').map(|x| x.parse().unwrap()).collect();
         RaceConfig { time, distance }
     }
     fn count_wins_for_race_index(&self, index: usize) -> u64 {
@@ -101,6 +114,19 @@ mod tests {
             RaceConfig {
                 time: vec![7, 15, 30],
                 distance: vec![9, 40, 200]
+            }
+        );
+    }
+
+    #[test]
+    fn parse_1() {
+        let text_file_string = read_to_string("./input_sample.txt").unwrap();
+        let race = RaceConfig::from_str_b(&text_file_string);
+        assert_eq!(
+            race,
+            RaceConfig {
+                time: vec![71530],
+                distance: vec![940200]
             }
         );
     }
