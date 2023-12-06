@@ -85,10 +85,8 @@ impl RaceConfig {
         total_wins
     }
     fn solve_part_1(&self) -> u64 {
-        self.time
-            .iter()
-            .enumerate()
-            .map(|(index, _)| self.count_wins_for_race_index(index))
+        (0..self.time.len())
+            .map(|index| self.count_wins_for_race_index(index))
             .product()
     }
 }
