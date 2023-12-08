@@ -12,14 +12,14 @@ fn part_2() -> u64 {
 fn get_steps(path: &str, map: &[(&str, (&str, &str))]) -> u64 {
     let mut chars_cycle = path.chars().cycle();
     let mappy: HashMap<&str, (&str, &str)> = map.iter().copied().collect();
-    let mut noot = String::from("AAA");
+    let mut noot = "AAA";
     let mut steps = 0;
     while noot != "ZZZ" {
         let next_char = chars_cycle.next().unwrap();
-        let current_position = mappy.get(noot.as_str()).unwrap();
+        let current_position = mappy.get(noot).unwrap();
         noot = match next_char {
-            'L' => current_position.0.to_string(),
-            _ => current_position.1.to_string(),
+            'L' => current_position.0,
+            _ => current_position.1,
         };
         steps += 1;
     }
@@ -32,7 +32,7 @@ fn main() {
     let part_2_result = part_2();
     println!("WHAT IS part_2_result?? {part_2_result}");
     /*
-        WHAT IS part_1_result?? ???
+        WHAT IS part_1_result?? 15871
         WHAT IS part_2_result?? ???
     */
 }
